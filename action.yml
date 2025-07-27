@@ -49,10 +49,10 @@ runs:
       shell: bash
       run: |
         # Download the necessary scripts from the action repository
-        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/propreports_exporter.py
-        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/daily_exporter.py
-        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/weekly_summary.py
-        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/monthly_summary.py
+        wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/propreports_exporter.py
+        wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/daily_exporter.py
+        wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/weekly_summary.py
+        wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/monthly_summary.py
     
     - name: Run daily export
       shell: bash
