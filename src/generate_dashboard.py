@@ -10,6 +10,10 @@ from generate_calendar import get_year_data, calculate_year_stats
 
 def generate_html_dashboard():
     """Genera un dashboard HTML completo con gráficos interactivos"""
+    # Primero generar los datos
+    from generate_dashboard_data import generate_dashboard_data
+    generate_dashboard_data()
+    
     year = datetime.now().year
     year_data = get_year_data(year)
     stats = calculate_year_stats(year_data)
@@ -41,23 +45,19 @@ def generate_html_dashboard():
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-sm font-medium text-gray-500">Total P&L</h3>
-                <p class="text-2xl font-bold mt-2 """ + ('profit' if stats['total_pnl'] >= 0 else 'loss') + f"""">
-                    ${stats['total_pnl']:,.2f}
-                </p>
+                <p id="totalPnl" class="text-2xl font-bold mt-2 text-gray-800">Loading...</p>
             </div>
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-sm font-medium text-gray-500">Total Trades</h3>
-                <p class="text-2xl font-bold mt-2 text-gray-800">{stats['total_trades']:,}</p>
+                <p id="totalTrades" class="text-2xl font-bold mt-2 text-gray-800">Loading...</p>
             </div>
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-sm font-medium text-gray-500">Win Rate</h3>
-                <p class="text-2xl font-bold mt-2 text-gray-800">{stats['win_rate']:.1f}%</p>
+                <p id="winRate" class="text-2xl font-bold mt-2 text-gray-800">Loading...</p>
             </div>
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-sm font-medium text-gray-500">Daily Average</h3>
-                <p class="text-2xl font-bold mt-2 """ + ('profit' if stats['daily_avg'] >= 0 else 'loss') + f"""">
-                    ${stats['daily_avg']:.2f}
-                </p>
+                <p id="dailyAvg" class="text-2xl font-bold mt-2 text-gray-800">Loading...</p>
             </div>
         </div>
         
@@ -87,10 +87,33 @@ def generate_html_dashboard():
     </div>
     
     <script>
-        // Data preparation
-        const yearData = """ + json.dumps(year_data) + """;
+        // Load data from JSON file
+        fetch('dashboard-data.json')
+            .then(response => response.json())
+            .then(data => {
+                initializeDashboard(data);
+            })
+            .catch(error => {
+                console.error('Error loading dashboard data:', error);
+                // Fallback to embedded data
+                const fallbackData = {
+                    yearData: """ + json.dumps(year_data) + """,
+                    yearStats: """ + json.dumps(stats) + """
+                };
+                initializeDashboard(fallbackData);
+            });
         
-        // Calendar Heatmap
+        function initializeDashboard(data) {
+            const yearData = data.yearData || {};
+            const stats = data.yearStats || {};
+            
+            // Update metrics
+            document.getElementById('totalPnl').textContent = '$' + (stats.total_pnl || 0).toFixed(2);
+            document.getElementById('totalTrades').textContent = (stats.total_trades || 0).toLocaleString();
+            document.getElementById('winRate').textContent = (stats.win_rate || 0).toFixed(1) + '%';
+            document.getElementById('dailyAvg').textContent = '$' + (stats.daily_avg || 0).toFixed(2);
+            
+            // Calendar Heatmap
         const cal = new CalHeatmap();
         const calData = {};
         

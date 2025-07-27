@@ -1,0 +1,6 @@
+# GitHub Pages Configuration
+theme: jekyll-theme-minimal
+title: PropReports Trading Dashboard
+description: Automated trading data analytics and visualization
+show_downloads: false
+google_analytics:

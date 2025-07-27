@@ -131,6 +131,14 @@ That's it! 🎉 Your trades will be exported automatically every day.
 curl -sSL https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/quick-setup.sh | bash
 ```
 
+## 🌟 Live Example
+
+Check out our **[Live Showcase Repository](https://github.com/jefrnc/test-propreports-export)** to see:
+- 📊 Dynamic README statistics
+- 📅 Interactive trading calendar
+- 🌐 [GitHub Pages Dashboard](https://jefrnc.github.io/test-propreports-export/)
+- 📈 120 days of sample trading data
+
 ## 🗂️ Data Structure
 
 ```
