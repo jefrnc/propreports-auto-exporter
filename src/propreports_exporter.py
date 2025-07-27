@@ -137,6 +137,9 @@ class PropReportsExporter:
                     pnl = self._parse_number(cells[8].text)
                     commission = self._parse_number(cells[9].text) if len(cells) > 9 else 0
                     
+                    # PropReports provides net P&L in cell[17]
+                    net = self._parse_number(cells[17].text) if len(cells) > 17 else (pnl - commission)
+                    
                     trade = {
                         'date': current_date,
                         'opened': cells[0].text.strip(),
@@ -149,8 +152,8 @@ class PropReportsExporter:
                         'size': self._parse_number(cells[7].text),
                         'pnl': pnl,
                         'commission': commission,
-                        'net': pnl - commission,  # Calculate net as P&L minus commission
-                        'account': cells[11].text.strip() if len(cells) > 11 else self.username
+                        'net': net,  # Use provided net or calculate
+                        'account': self.username  # Account not in HTML
                     }
                     
                     # Determinar side basado en type
