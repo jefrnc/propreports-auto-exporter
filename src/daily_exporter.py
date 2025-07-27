@@ -89,7 +89,7 @@ def export_daily_trades():
             'totalTrades': len(todays_trades),
             'totalPnL': round(sum(t.get('pnl', 0) for t in todays_trades), 2),
             'totalCommissions': round(sum(t.get('commission', 0) for t in todays_trades), 2),
-            'netPnL': round(sum(t.get('net', t.get('pnl', 0) - t.get('commission', 0)) for t in todays_trades), 2),
+            'netPnL': round(sum(t.get('net', 0) if t.get('net', 0) != 0 else (t.get('pnl', 0) - t.get('commission', 0)) for t in todays_trades), 2),
             'winningTrades': len([t for t in todays_trades if t.get('pnl', 0) > 0]),
             'losingTrades': len([t for t in todays_trades if t.get('pnl', 0) < 0]),
             'symbols': list(set(t.get('symbol', '') for t in todays_trades if t.get('symbol')))
