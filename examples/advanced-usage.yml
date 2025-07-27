@@ -1,0 +1,44 @@
+name: Advanced PropReports Export
+
+on:
+  schedule:
+    # Run twice daily - morning and evening
+    - cron: '0 13 * * *'  # 9 AM EST
+    - cron: '0 3 * * *'   # 10 PM EST
+  workflow_dispatch:
+    inputs:
+      force-weekly:
+        description: 'Force weekly summary generation'
+        required: false
+        type: boolean
+        default: false
+      force-monthly:
+        description: 'Force monthly summary generation'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Export PropReports Data
+      uses: jefrnc/propreports-auto-exporter@v1
+      with:
+        propreports-domain: ${{ secrets.PROPREPORTS_DOMAIN }}
+        propreports-user: ${{ secrets.PROPREPORTS_USER }}
+        propreports-pass: ${{ secrets.PROPREPORTS_PASS }}
+        export-path: 'trading-data'
+        generate-weekly: ${{ github.event.inputs.force-weekly || 'auto' }}
+        generate-monthly: ${{ github.event.inputs.force-monthly || 'auto' }}
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: trading-exports-${{ github.run_number }}
+        path: trading-data/

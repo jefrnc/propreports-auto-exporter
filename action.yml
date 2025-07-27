@@ -1,0 +1,92 @@
+name: 'PropReports Auto-Exporter'
+description: 'Automatically export trading data from PropReports with daily, weekly, and monthly summaries'
+author: 'jefrnc'
+branding:
+  icon: 'trending-up'
+  color: 'green'
+
+inputs:
+  propreports-domain:
+    description: 'Your PropReports domain (e.g., zim.propreports.com)'
+    required: true
+  propreports-user:
+    description: 'Your PropReports username'
+    required: true
+  propreports-pass:
+    description: 'Your PropReports password'
+    required: true
+  export-path:
+    description: 'Path where exports will be saved'
+    required: false
+    default: 'exports'
+  commit-exports:
+    description: 'Whether to commit exported files'
+    required: false
+    default: 'true'
+  generate-weekly:
+    description: 'Generate weekly summary (auto on Sundays)'
+    required: false
+    default: 'auto'
+  generate-monthly:
+    description: 'Generate monthly summary (auto on last day)'
+    required: false
+    default: 'auto'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install requests beautifulsoup4 lxml numpy
+    
+    - name: Download exporter scripts
+      shell: bash
+      run: |
+        # Download the necessary scripts from the action repository
+        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/propreports_exporter.py
+        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/daily_exporter.py
+        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/weekly_summary.py
+        wget -q https://raw.githubusercontent.com/${{ github.action_repository }}/main/src/monthly_summary.py
+    
+    - name: Run daily export
+      shell: bash
+      env:
+        PROPREPORTS_DOMAIN: ${{ inputs.propreports-domain }}
+        PROPREPORTS_USER: ${{ inputs.propreports-user }}
+        PROPREPORTS_PASS: ${{ inputs.propreports-pass }}
+        EXPORT_OUTPUT_DIR: ${{ inputs.export-path }}
+      run: |
+        echo "📅 Running daily export for $(date +%Y-%m-%d)..."
+        python daily_exporter.py
+    
+    - name: Generate weekly summary
+      shell: bash
+      if: ${{ inputs.generate-weekly == 'true' || (inputs.generate-weekly == 'auto' && github.event.schedule == '0 3 * * 0') }}
+      run: |
+        echo "📊 Generating weekly summary..."
+        python weekly_summary.py
+    
+    - name: Generate monthly summary  
+      shell: bash
+      if: ${{ inputs.generate-monthly == 'true' || (inputs.generate-monthly == 'auto' && endsWith(github.event.schedule, '1')) }}
+      run: |
+        # Check if it's the last day of month
+        if [ "$(date -d tomorrow +%d)" = "01" ] || [ "${{ inputs.generate-monthly }}" = "true" ]; then
+          echo "📈 Generating monthly summary..."
+          python monthly_summary.py
+        fi
+    
+    - name: Commit and push exports
+      if: ${{ inputs.commit-exports == 'true' }}
+      shell: bash
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "PropReports Export Action"
+        git add ${{ inputs.export-path }}/
+        git diff --quiet && git diff --staged --quiet || (git commit -m "📊 PropReports export - $(date +%Y-%m-%d)" && git push)

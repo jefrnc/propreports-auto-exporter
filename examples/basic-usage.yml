@@ -1,0 +1,22 @@
+name: Export My Trading Data
+
+on:
+  schedule:
+    # Run daily at 10 PM EST (3 AM UTC)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Allow manual runs
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Export PropReports Data
+      uses: jefrnc/propreports-auto-exporter@v1
+      with:
+        propreports-domain: ${{ secrets.PROPREPORTS_DOMAIN }}
+        propreports-user: ${{ secrets.PROPREPORTS_USER }}
+        propreports-pass: ${{ secrets.PROPREPORTS_PASS }}

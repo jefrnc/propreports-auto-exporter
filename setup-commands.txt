@@ -1,0 +1,30 @@
+# Comandos para subir el proyecto a GitHub
+
+# 1. Entrar al directorio del proyecto
+cd propreports-auto-exporter
+
+# 2. Inicializar git
+git init
+
+# 3. Configurar tu información (ajusta con tus datos)
+git config user.name "Tu Nombre"
+git config user.email "tu-email@example.com"
+
+# 4. Agregar todos los archivos
+git add .
+
+# 5. Hacer el primer commit
+git commit -m "Initial commit: PropReports Auto-Exporter"
+
+# 6. Conectar con tu repositorio
+git branch -M main
+git remote add origin https://github.com/jefrnc/propreports-auto-exporter.git
+
+# 7. Subir el código
+git push -u origin main
+
+# 8. Crear el release v1.0.0
+# Ve a GitHub → Releases → Create new release
+# Tag: v1.0.0
+# Title: PropReports Auto-Exporter v1.0.0
+# Description: Primera versión estable
