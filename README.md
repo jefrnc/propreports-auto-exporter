@@ -8,6 +8,59 @@
 
 [Español](./docs/README_ES.md) | [Installation](#-quick-start) | [Examples](./examples) | [FAQ](./docs/FAQ.md)
 
+<!-- STATS_START -->
+### 📊 Live Trading Statistics
+
+| Period | Trades | P&L | Win Rate |
+|--------|--------|-----|----------|
+| **Week 30 (partial)** | 49 | **+$138.45** | 71.4% |
+| Week 29 | 0 | $0.00 | 0% |
+| **July (partial)** | 213 | **+$437.94** | 74.6% |
+| June | 127 | **-$57.69** | 62.2% |
+
+#### 📈 Yearly Projection
+
+| Metric | Actual YTD | Projected EOY |
+|--------|------------|---------------|
+| **Trades** | 391 | 677 |
+| **P&L** | **+$390.25** | **+$676.00** |
+
+*Based on current performance with 158 days remaining*
+
+*Last updated: 2025-07-26 23:45 UTC*
+<!-- STATS_END -->
+
+<!-- CALENDAR_START -->
+## 📅 2025 Trading Calendar
+
+![Trading Calendar](.github/assets/calendar-2025.svg)
+
+### Legend
+🟩 Profit Day | 🟨 Break Even | 🟥 Loss Day | ⬜ No Trades
+
+### 📊 2025 Statistics
+
+| Metric | Value |
+|--------|-------|
+| **Total Trading Days** | 26 |
+| **Total Trades** | 391 |
+| **Total P&L** | $390.25 |
+| **Win Rate** | 65.4% |
+| **Profit Days** | 17 (65.4%) |
+| **Loss Days** | 9 (34.6%) |
+| **Best Day** | $83.00 (2025-06-26) |
+| **Worst Day** | $-14.00 (2025-06-13) |
+| **Daily Average** | $15.01 |
+
+### 📈 Monthly Breakdown
+
+| Month | Trades | P&L | Win Rate |
+|-------|--------|-----|----------|
+| May | 51 | **+$9.70** | 70.6% |
+| June | 127 | **-$57.69** | 62.2% |
+| July | 213 | **+$437.94** | 74.2% |
+<!-- CALENDAR_END -->
+
 ## ✨ Features
 
 - 📅 **Daily Automatic Export** - Never miss a trade
@@ -124,6 +177,7 @@ exports/
     generate-weekly: 'true'          # Force weekly summary
     generate-monthly: 'true'         # Force monthly summary
     commit-exports: 'true'           # Auto-commit (default: true)
+    full-reprocess: 'false'          # Generate all summaries when reprocessing
 ```
 
 ### Input Parameters
@@ -139,6 +193,7 @@ exports/
 | `generate-weekly` | Generate weekly summary | ❌ | `auto` |
 | `generate-monthly` | Generate monthly summary | ❌ | `auto` |
 | `commit-exports` | Auto-commit changes | ❌ | `true` |
+| `full-reprocess` | Generate all summaries when reprocessing | ❌ | `false` |
 
 ## 📊 Exported Data
 
@@ -225,6 +280,9 @@ python src/weekly_summary.py
 
 # Generate monthly report
 python src/monthly_summary.py
+
+# Full reprocess with all summaries (60 days)
+python src/full_reprocess.py 60
 ```
 
 ## 📖 Examples
@@ -261,6 +319,18 @@ on:
     
 - name: Upload to S3
   # ... custom upload logic
+```
+
+### Full Historical Reprocess
+```yaml
+# Reprocess 60 days with all weekly/monthly summaries
+- uses: jefrnc/propreports-auto-exporter@v1
+  with:
+    propreports-domain: ${{ secrets.PROPREPORTS_DOMAIN }}
+    propreports-user: ${{ secrets.PROPREPORTS_USER }}
+    propreports-pass: ${{ secrets.PROPREPORTS_PASS }}
+    reprocess-days: '60'
+    full-reprocess: 'true'  # Generates all summaries automatically
 ```
 
 ## 🛡️ Security Best Practices

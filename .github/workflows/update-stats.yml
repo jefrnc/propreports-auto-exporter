@@ -1,0 +1,60 @@
+name: Update Trading Statistics
+
+on:
+  # Run after export workflow completes
+  workflow_run:
+    workflows: ["Export Trading Data"]
+    types:
+      - completed
+  
+  # Also allow manual trigger
+  workflow_dispatch:
+  
+  # Run daily at 11 PM EST (after exports)
+  schedule:
+    - cron: '0 4 * * *'  # 4 AM UTC = 11 PM EST
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
+    
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Update statistics
+      run: |
+        echo "📊 Updating trading statistics..."
+        python src/generate_stats.py
+        
+        echo "📅 Generating calendar..."
+        python src/generate_calendar.py
+        
+        echo "🌐 Generating dashboard..."
+        python src/generate_dashboard.py
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "Stats Update Bot"
+        
+        # Check if there are changes
+        if git diff --quiet; then
+          echo "No changes to commit"
+        else
+          git add README.md
+          git commit -m "📊 Update trading statistics [skip ci]"
+          git push
+          echo "✅ Statistics updated successfully"
+        fi

@@ -39,6 +39,10 @@ inputs:
     description: 'Obfuscate account names for privacy'
     required: false
     default: 'true'
+  full-reprocess:
+    description: 'Generate all weekly/monthly summaries when reprocessing'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -62,6 +66,7 @@ runs:
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/advanced_exporter.py
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/weekly_summary.py
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/monthly_summary.py
+        wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/full_reprocess.py
     
     - name: Run daily export with reprocessing
       shell: bash
@@ -80,8 +85,13 @@ runs:
         
         # Reprocess previous days if configured
         if [ "${{ inputs.reprocess-days }}" -gt "0" ]; then
-          echo "🔄 Reprocessing last ${{ inputs.reprocess-days }} days..."
-          python advanced_exporter.py reprocess ${{ inputs.reprocess-days }}
+          if [ "${{ inputs.full-reprocess }}" = "true" ]; then
+            echo "🔄 Full reprocessing last ${{ inputs.reprocess-days }} days (with summaries)..."
+            python full_reprocess.py ${{ inputs.reprocess-days }}
+          else
+            echo "🔄 Reprocessing last ${{ inputs.reprocess-days }} days..."
+            python advanced_exporter.py reprocess ${{ inputs.reprocess-days }}
+          fi
         fi
     
     - name: Generate weekly summary
