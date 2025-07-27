@@ -41,3 +41,7 @@ exports/
 *.tmp
 *.bak
 .cache/
+
+# Showcase repository
+propreports-trading-dashboard/
+test-propreports-export/
