@@ -51,6 +51,17 @@ schedule:
 - Es normal si no hay trades ese día
 - El archivo se creará vacío para mantener el registro
 
+### ¿Por qué faltan algunos trades?
+**Los trades pueden aparecer con hasta 24 horas de retraso en PropReports.** Por esto:
+- El sistema reprocesa automáticamente los últimos 2-3 días
+- Los archivos se actualizan con nuevos trades cuando aparecen
+- Puedes ajustar con `reprocess-days: '3'` para más días
+
+### ¿Cómo funciona la ofuscación de cuentas?
+Por defecto, los números de cuenta se ofuscan mostrando solo los primeros y últimos 2 caracteres:
+- `ZIMDASE9C64` → `ZI*******64`
+- Puedes desactivarlo con `obfuscate-account: 'false'`
+
 ## Personalización
 
 ### ¿Puedo cambiar el formato de exportación?

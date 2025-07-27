@@ -12,6 +12,8 @@
 - 📈 **Reportes mensuales** con métricas avanzadas y recomendaciones
 - 🔄 **Versionado automático** en GitHub
 - 🔒 **Seguro** - Usa GitHub Secrets para credenciales
+- 🛡️ **Privacidad** - Ofuscación automática de números de cuenta
+- ♻️ **Reprocesamiento** - Actualiza días anteriores automáticamente
 - ⚡ **Fácil** - Setup en 5 minutos
 
 ## 🎯 ¿Para quién es?
@@ -142,6 +144,15 @@ exports/
     propreports-pass: ${{ secrets.PROPREPORTS_PASS }}
     commit-exports: 'false'
 ```
+
+## ⚠️ Nota Importante: Delay en Trades
+
+> **Los trades pueden aparecer con hasta 24 horas de retraso en PropReports**
+> 
+> Por esta razón, el sistema automáticamente:
+> - Reprocesa los últimos 2-3 días en cada ejecución
+> - Actualiza archivos existentes con nuevos trades
+> - Mantiene un historial de cuándo se procesó cada día
 
 ## 🔧 Uso Local
 

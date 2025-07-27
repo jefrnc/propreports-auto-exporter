@@ -31,6 +31,14 @@ inputs:
     description: 'Generate monthly summary (auto on last day)'
     required: false
     default: 'auto'
+  reprocess-days:
+    description: 'Number of previous days to reprocess (for delayed trades)'
+    required: false
+    default: '2'
+  obfuscate-account:
+    description: 'Obfuscate account names for privacy'
+    required: false
+    default: 'true'
 
 runs:
   using: 'composite'
@@ -51,19 +59,30 @@ runs:
         # Download the necessary scripts from the action repository
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/propreports_exporter.py
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/daily_exporter.py
+        wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/advanced_exporter.py
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/weekly_summary.py
         wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/monthly_summary.py
     
-    - name: Run daily export
+    - name: Run daily export with reprocessing
       shell: bash
       env:
         PROPREPORTS_DOMAIN: ${{ inputs.propreports-domain }}
         PROPREPORTS_USER: ${{ inputs.propreports-user }}
         PROPREPORTS_PASS: ${{ inputs.propreports-pass }}
         EXPORT_OUTPUT_DIR: ${{ inputs.export-path }}
+        OBFUSCATE_ACCOUNT: ${{ inputs.obfuscate-account }}
       run: |
         echo "📅 Running daily export for $(date +%Y-%m-%d)..."
+        echo "♻️ Will also reprocess last ${{ inputs.reprocess-days }} days for delayed trades..."
+        
+        # Export today
         python daily_exporter.py
+        
+        # Reprocess previous days if configured
+        if [ "${{ inputs.reprocess-days }}" -gt "0" ]; then
+          echo "🔄 Reprocessing last ${{ inputs.reprocess-days }} days..."
+          python advanced_exporter.py reprocess ${{ inputs.reprocess-days }}
+        fi
     
     - name: Generate weekly summary
       shell: bash

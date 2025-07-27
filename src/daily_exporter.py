@@ -9,6 +9,20 @@ import json
 from datetime import datetime, timedelta
 from propreports_exporter import PropReportsExporter
 
+def obfuscate_account(account_name):
+    """Ofusca el nombre de cuenta para mayor seguridad"""
+    if not account_name or len(account_name) < 4:
+        return "****"
+    
+    # Mostrar primeros 2 y últimos 2 caracteres
+    visible_start = 2
+    visible_end = 2
+    
+    if len(account_name) <= visible_start + visible_end:
+        return account_name[0] + "*" * (len(account_name) - 2) + account_name[-1]
+    
+    return account_name[:visible_start] + "*" * (len(account_name) - visible_start - visible_end) + account_name[-visible_end:]
+
 def ensure_directory_structure():
     """Crea la estructura de directorios para organizar exports"""
     base_dir = "exports"
@@ -71,7 +85,8 @@ def export_daily_trades():
     # Preparar estructura de datos
     daily_data = {
         'exportDate': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'account': USERNAME,
+        'account': obfuscate_account(USERNAME),
+        'account_raw': USERNAME,  # Solo para uso interno, no se mostrará
         'date': today,
         'trades': todays_trades,
         'summary': {
