@@ -8,7 +8,7 @@ import os
 import json
 from datetime import datetime, timedelta
 from propreports_exporter import PropReportsExporter
-from daily_exporter import obfuscate_account, ensure_directory_structure
+from daily_exporter import obfuscate_account
 
 def export_date_range(start_date, end_date, force_update=False):
     """
@@ -44,10 +44,9 @@ def export_date_range(start_date, end_date, force_update=False):
     while current_date <= end_date:
         date_str = current_date.strftime('%Y-%m-%d')
         
-        # Crear estructura de directorios para la fecha específica
-        year = current_date.strftime('%Y')
-        month = current_date.strftime('%m')
-        daily_dir = os.path.join("exports", year, month, "daily")
+        # Nueva estructura simplificada
+        base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+        daily_dir = os.path.join(base_dir, "daily")
         
         # Asegurar que el directorio existe
         os.makedirs(daily_dir, exist_ok=True)

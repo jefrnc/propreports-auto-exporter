@@ -86,18 +86,35 @@ runs:
     
     - name: Generate weekly summary
       shell: bash
-      if: ${{ inputs.generate-weekly == 'true' || (inputs.generate-weekly == 'auto' && github.event.schedule == '0 3 * * 0') }}
+      env:
+        EXPORT_OUTPUT_DIR: ${{ inputs.export-path }}
       run: |
-        echo "📊 Generating weekly summary..."
-        python weekly_summary.py
+        # Check if we should generate weekly summary
+        GENERATE_WEEKLY="${{ inputs.generate-weekly }}"
+        DAY_OF_WEEK=$(date +%u)  # 1=Monday, 7=Sunday
+        
+        if [ "$GENERATE_WEEKLY" = "true" ]; then
+          echo "📊 Force generating weekly summary..."
+          python weekly_summary.py
+        elif [ "$GENERATE_WEEKLY" = "auto" ] && [ "$DAY_OF_WEEK" = "7" -o "$DAY_OF_WEEK" = "1" ]; then
+          echo "📊 Auto-generating weekly summary (weekend)..."
+          python weekly_summary.py
+        fi
     
     - name: Generate monthly summary  
       shell: bash
-      if: ${{ inputs.generate-monthly == 'true' || (inputs.generate-monthly == 'auto' && endsWith(github.event.schedule, '1')) }}
+      env:
+        EXPORT_OUTPUT_DIR: ${{ inputs.export-path }}
       run: |
-        # Check if it's the last day of month
-        if [ "$(date -d tomorrow +%d)" = "01" ] || [ "${{ inputs.generate-monthly }}" = "true" ]; then
-          echo "📈 Generating monthly summary..."
+        # Check if we should generate monthly summary
+        GENERATE_MONTHLY="${{ inputs.generate-monthly }}"
+        DAY_OF_MONTH=$(date +%d)
+        
+        if [ "$GENERATE_MONTHLY" = "true" ]; then
+          echo "📈 Force generating monthly summary..."
+          python monthly_summary.py
+        elif [ "$GENERATE_MONTHLY" = "auto" ] && [ "$DAY_OF_MONTH" -le "03" ]; then
+          echo "📈 Auto-generating monthly summary (start of month)..."
           python monthly_summary.py
         fi
     

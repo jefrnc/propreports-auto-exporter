@@ -25,24 +25,20 @@ def obfuscate_account(account_name):
 
 def ensure_directory_structure():
     """Crea la estructura de directorios para organizar exports"""
-    base_dir = "exports"
-    year = datetime.now().strftime('%Y')
-    month = datetime.now().strftime('%m')
+    base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
     
-    # Estructura: exports/2025/07/daily/
+    # Nueva estructura: exports/daily/, exports/weekly/, exports/monthly/
     directories = [
         base_dir,
-        os.path.join(base_dir, year),
-        os.path.join(base_dir, year, month),
-        os.path.join(base_dir, year, month, "daily"),
-        os.path.join(base_dir, year, month, "weekly"),
-        os.path.join(base_dir, year, month, "monthly")
+        os.path.join(base_dir, "daily"),
+        os.path.join(base_dir, "weekly"),
+        os.path.join(base_dir, "monthly")
     ]
     
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
     
-    return os.path.join(base_dir, year, month)
+    return base_dir
 
 def export_daily_trades():
     """Exporta trades del día actual"""
@@ -101,8 +97,8 @@ def export_daily_trades():
     }
     
     # Guardar en estructura de carpetas
-    month_dir = ensure_directory_structure()
-    daily_dir = os.path.join(month_dir, "daily")
+    base_dir = ensure_directory_structure()
+    daily_dir = os.path.join(base_dir, "daily")
     
     # Nombre del archivo: YYYY-MM-DD.json
     filename = os.path.join(daily_dir, f"{today}.json")

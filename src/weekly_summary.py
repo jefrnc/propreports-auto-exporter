@@ -26,10 +26,8 @@ def get_week_dates(date=None):
 
 def load_daily_files(week_start, week_end):
     """Carga todos los archivos diarios de la semana"""
-    year = week_start.strftime('%Y')
-    month = week_start.strftime('%m')
-    
-    daily_dir = f"exports/{year}/{month}/daily"
+    base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+    daily_dir = os.path.join(base_dir, "daily")
     daily_data = []
     
     # Iterar por cada día de la semana
@@ -223,14 +221,14 @@ def generate_weekly_summary(week_date=None):
     }
     
     # Guardar resumen semanal
-    year = week_start.strftime('%Y')
-    month = week_start.strftime('%m')
-    weekly_dir = f"exports/{year}/{month}/weekly"
+    base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+    weekly_dir = os.path.join(base_dir, "weekly")
     os.makedirs(weekly_dir, exist_ok=True)
     
-    # Nombre del archivo: week_XX.json
+    # Nombre del archivo: YYYY-WXX.json
+    year = week_start.year
     week_num = week_start.isocalendar()[1]
-    filename = os.path.join(weekly_dir, f"week_{week_num:02d}.json")
+    filename = os.path.join(weekly_dir, f"{year}-W{week_num:02d}.json")
     
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(weekly_summary, f, indent=2, ensure_ascii=False)
@@ -243,5 +241,19 @@ def generate_weekly_summary(week_date=None):
     return filename
 
 if __name__ == "__main__":
-    # Generar resumen de la semana actual
-    generate_weekly_summary()
+    import sys
+    
+    if len(sys.argv) > 1:
+        # Si se pasa una fecha, generar para esa semana
+        date_str = sys.argv[1]
+        generate_weekly_summary(date_str)
+    else:
+        # Por defecto, generar para la semana anterior si es lunes, o la actual si es otro día
+        today = datetime.now()
+        if today.weekday() == 0:  # Si es lunes
+            # Generar resumen de la semana anterior
+            last_week = today - timedelta(days=7)
+            generate_weekly_summary(last_week)
+        else:
+            # Generar resumen de la semana actual
+            generate_weekly_summary()

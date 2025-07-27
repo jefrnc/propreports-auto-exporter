@@ -82,17 +82,17 @@ curl -sSL https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/mai
 
 ```
 exports/
-└── 2024/
-    └── 03/
-        ├── daily/
-        │   ├── 2024-03-01.json    # Individual trades
-        │   ├── 2024-03-02.json
-        │   └── ...
-        ├── weekly/
-        │   └── week_09.json       # Weekly analytics
-        └── monthly/
-            ├── 2024-03_monthly_summary.json  # Full analysis
-            └── 2024-03_monthly_summary.txt   # Human-readable
+├── daily/
+│   ├── 2024-03-01.json     # Individual trades for each day
+│   ├── 2024-03-02.json
+│   └── ...
+├── weekly/
+│   ├── 2024-W09.json       # Weekly analytics (generated on weekends)
+│   ├── 2024-W10.json
+│   └── ...
+└── monthly/
+    ├── 2024-03.json        # Full monthly analysis
+    └── 2024-03.txt         # Human-readable report
 ```
 
 ## ⚙️ Configuration

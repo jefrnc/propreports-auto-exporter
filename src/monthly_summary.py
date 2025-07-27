@@ -13,33 +13,48 @@ import glob
 
 def load_weekly_summaries(year, month):
     """Carga todos los resúmenes semanales del mes"""
-    weekly_dir = f"exports/{year}/{month:02d}/weekly"
-    weekly_files = glob.glob(os.path.join(weekly_dir, "week_*.json"))
+    base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+    weekly_dir = os.path.join(base_dir, "weekly")
     
-    weekly_data = []
-    for file_path in sorted(weekly_files):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            weekly_data.append(json.load(f))
+    # Buscar archivos semanales del mes específico
+    weekly_files = []
+    for week in range(1, 54):  # Posibles semanas del año
+        filename = os.path.join(weekly_dir, f"{year}-W{week:02d}.json")
+        if os.path.exists(filename):
+            with open(filename, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                # Verificar si la semana pertenece al mes
+                week_period = data.get('weekPeriod', '')
+                if f"{year}-{month:02d}" in week_period:
+                    weekly_files.append(data)
     
-    return weekly_data
+    return weekly_files
 
 def load_all_daily_files(year, month):
     """Carga todos los archivos diarios del mes"""
-    daily_dir = f"exports/{year}/{month:02d}/daily"
-    daily_files = glob.glob(os.path.join(daily_dir, "*.json"))
+    base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+    daily_dir = os.path.join(base_dir, "daily")
     
     all_trades = []
     daily_summaries = []
     
-    for file_path in sorted(daily_files):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            all_trades.extend(data.get('trades', []))
-            daily_summaries.append({
-                'date': data.get('date'),
-                'trades': data.get('summary', {}).get('totalTrades', 0),
-                'pnl': data.get('summary', {}).get('netPnL', 0)
-            })
+    # Obtener primer y último día del mes
+    first_day = 1
+    last_day = calendar.monthrange(year, month)[1]
+    
+    for day in range(first_day, last_day + 1):
+        date_str = f"{year}-{month:02d}-{day:02d}"
+        file_path = os.path.join(daily_dir, f"{date_str}.json")
+        
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                all_trades.extend(data.get('trades', []))
+                daily_summaries.append({
+                    'date': data.get('date'),
+                    'trades': data.get('summary', {}).get('totalTrades', 0),
+                    'pnl': data.get('summary', {}).get('netPnL', 0)
+                })
     
     return all_trades, daily_summaries
 
@@ -242,10 +257,11 @@ def generate_monthly_summary(year=None, month=None):
     monthly_summary['recommendations'] = generate_recommendations(performance_analysis, monthly_summary)
     
     # Guardar resumen mensual
-    monthly_dir = f"exports/{year}/{month:02d}/monthly"
+    base_dir = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+    monthly_dir = os.path.join(base_dir, "monthly")
     os.makedirs(monthly_dir, exist_ok=True)
     
-    filename = os.path.join(monthly_dir, f"{year}-{month:02d}_monthly_summary.json")
+    filename = os.path.join(monthly_dir, f"{year}-{month:02d}.json")
     
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(monthly_summary, f, indent=2, ensure_ascii=False)
@@ -337,5 +353,22 @@ def generate_text_report(summary, filename):
     print(f"📝 Reporte de texto generado: {filename}")
 
 if __name__ == "__main__":
-    # Generar resumen del mes actual
-    generate_monthly_summary()
+    import sys
+    
+    if len(sys.argv) >= 3:
+        # Si se pasan año y mes como argumentos
+        year = int(sys.argv[1])
+        month = int(sys.argv[2])
+        generate_monthly_summary(year, month)
+    else:
+        # Por defecto, generar del mes anterior
+        today = datetime.now()
+        if today.day <= 5:  # Si estamos en los primeros días del mes
+            # Generar resumen del mes anterior
+            if today.month == 1:
+                generate_monthly_summary(today.year - 1, 12)
+            else:
+                generate_monthly_summary(today.year, today.month - 1)
+        else:
+            # Generar resumen del mes actual
+            generate_monthly_summary()
