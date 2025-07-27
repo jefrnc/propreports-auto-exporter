@@ -44,11 +44,14 @@ def export_date_range(start_date, end_date, force_update=False):
     while current_date <= end_date:
         date_str = current_date.strftime('%Y-%m-%d')
         
-        # Verificar si el archivo ya existe
-        month_dir = ensure_directory_structure()
+        # Crear estructura de directorios para la fecha específica
         year = current_date.strftime('%Y')
         month = current_date.strftime('%m')
         daily_dir = os.path.join("exports", year, month, "daily")
+        
+        # Asegurar que el directorio existe
+        os.makedirs(daily_dir, exist_ok=True)
+        
         filename = os.path.join(daily_dir, f"{date_str}.json")
         
         if os.path.exists(filename) and not force_update:
@@ -94,6 +97,37 @@ def export_date_range(start_date, end_date, force_update=False):
             action = "♻️  Actualizado" if daily_data['metadata']['reprocessed'] else "✅ Creado"
             print(f"  {action}: {len(day_trades)} trades, P&L: ${daily_data['summary']['netPnL']}")
             exported_files.append(filename)
+        else:
+            # Si no hay trades, crear archivo vacío
+            print(f"  ⚠️  No se encontraron trades para {date_str}")
+            
+            # Crear archivo vacío solo si no existe
+            if not os.path.exists(filename):
+                empty_data = {
+                    'exportDate': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'account': obfuscate_account(USERNAME),
+                    'date': date_str,
+                    'trades': [],
+                    'summary': {
+                        'totalTrades': 0,
+                        'totalPnL': 0,
+                        'totalCommissions': 0,
+                        'netPnL': 0,
+                        'winningTrades': 0,
+                        'losingTrades': 0,
+                        'symbols': []
+                    },
+                    'metadata': {
+                        'reprocessed': False,
+                        'processedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                        'note': 'No trades found for this date'
+                    }
+                }
+                
+                with open(filename, 'w', encoding='utf-8') as f:
+                    json.dump(empty_data, f, indent=2, ensure_ascii=False)
+                
+                exported_files.append(filename)
         
         current_date += timedelta(days=1)
     
