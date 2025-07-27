@@ -187,5 +187,3 @@ Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
 ---
 
 ⭐ Si este proyecto te ayuda, considera darle una estrella!
-
-📧 Contacto: [Tu Email] | 🐦 Twitter: [@tutwitter]
