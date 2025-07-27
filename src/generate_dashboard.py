@@ -63,7 +63,7 @@ def generate_html_dashboard():
         
         <!-- Calendar Heatmap -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Trading Calendar {year}</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Trading Calendar {current_year}</h2>
             <div id="calendar" class="cal-heatmap-container"></div>
         </div>
         
