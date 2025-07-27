@@ -154,8 +154,18 @@ class PropReportsExporter:
                     trade['quantity'] = abs(trade['size'])
                     trade['price'] = trade['entry']
                     
-                    # Solo agregar trades válidos
-                    if trade['symbol'] and trade['symbol'] not in ['', 'Total:', 'Totals:']:
+                    # Validar que es un trade real y no una fila de subtotal/header
+                    # Los trades reales tienen tiempos en 'opened' (ej: "09:30:15")
+                    # Las filas de subtotales tienen "Equities" u otros textos
+                    is_valid_trade = (
+                        trade['symbol'] and 
+                        trade['symbol'] not in ['', 'Total:', 'Totals:'] and
+                        not trade['symbol'].isdigit() and  # Filtrar símbolos que son solo números
+                        ':' in trade['opened'] and  # El campo opened debe tener formato de hora
+                        trade['type'] in ['Long', 'Short', 'long', 'short']  # Type debe ser Long/Short
+                    )
+                    
+                    if is_valid_trade:
                         trades.append(trade)
                         
                 except Exception as e:

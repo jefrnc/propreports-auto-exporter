@@ -133,10 +133,10 @@ curl -sSL https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/mai
 
 ## 🌟 Live Example
 
-Check out our **[Live Showcase Repository](https://github.com/jefrnc/test-propreports-export)** to see:
+Check out our **[Live Showcase Repository](https://github.com/jefrnc/propreports-trading-dashboard)** to see:
 - 📊 Dynamic README statistics
 - 📅 Interactive trading calendar
-- 🌐 [GitHub Pages Dashboard](https://jefrnc.github.io/test-propreports-export/)
+- 🌐 [GitHub Pages Dashboard](https://jefrnc.github.io/propreports-trading-dashboard/)
 - 📈 120 days of sample trading data
 
 ## 🗂️ Data Structure
