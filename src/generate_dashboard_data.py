@@ -8,6 +8,9 @@ import json
 from datetime import datetime
 import glob
 
+# Get export directory from environment or use default
+EXPORT_DIR = os.getenv('EXPORT_OUTPUT_DIR', 'exports')
+
 def load_json_file(filepath):
     """Carga un archivo JSON de forma segura"""
     try:
@@ -21,7 +24,7 @@ def get_year_data(year):
     year_data = {}
     
     # Buscar todos los archivos diarios del año
-    pattern = f"exports/daily/{year}-*.json"
+    pattern = f"{EXPORT_DIR}/daily/{year}-*.json"
     for filepath in sorted(glob.glob(pattern)):
         # Extraer fecha del nombre del archivo
         filename = os.path.basename(filepath)
@@ -99,7 +102,7 @@ def calculate_enhanced_metrics(year_data):
     
     # Recopilar todos los trades del año
     for date, day_data in year_data.items():
-        daily_file = f"exports/daily/{date}.json"
+        daily_file = f"{EXPORT_DIR}/daily/{date}.json"
         if os.path.exists(daily_file):
             daily_data = load_json_file(daily_file)
             if daily_data and 'trades' in daily_data:
@@ -203,7 +206,7 @@ def generate_dashboard_data():
     # Cargar resúmenes mensuales
     monthly_data = []
     for month in range(1, 13):
-        month_file = f"exports/monthly/{year}-{month:02d}.json"
+        month_file = f"{EXPORT_DIR}/monthly/{year}-{month:02d}.json"
         if os.path.exists(month_file):
             data = load_json_file(month_file)
             if data:
@@ -218,7 +221,7 @@ def generate_dashboard_data():
     # Cargar resúmenes semanales
     weekly_data = []
     for week in range(1, 54):
-        week_file = f"exports/weekly/{year}-W{week:02d}.json"
+        week_file = f"{EXPORT_DIR}/weekly/{year}-W{week:02d}.json"
         if os.path.exists(week_file):
             data = load_json_file(week_file)
             if data:
