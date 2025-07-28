@@ -189,44 +189,6 @@ def calculate_enhanced_metrics(year_data):
         'top_losers': top_losers
     }
 
-def load_coaching_data(year):
-    """Carga los datos de coaching disponibles"""
-    coaching_data = {
-        'monthly': [],
-        'weekly': [],
-        'enabled': False
-    }
-    
-    # Check if coaching is enabled
-    coaching_enabled = os.getenv('ENABLE_COACHING', 'false').lower() == 'true'
-    coaching_data['enabled'] = coaching_enabled
-    
-    if not coaching_enabled:
-        return coaching_data
-    
-    # Load monthly coaching reports
-    monthly_pattern = f"{EXPORT_DIR}/coaching/monthly/{year}-*.json"
-    for filepath in sorted(glob.glob(monthly_pattern)):
-        data = load_json_file(filepath)
-        if data and 'coaching' in data:
-            coaching_data['monthly'].append({
-                'period': data['period'],
-                'generated_at': data['generated_at'],
-                'coaching': data['coaching']
-            })
-    
-    # Load weekly coaching reports
-    weekly_pattern = f"{EXPORT_DIR}/coaching/weekly/{year}-*.json"
-    for filepath in sorted(glob.glob(weekly_pattern)):
-        data = load_json_file(filepath)
-        if data and 'coaching' in data:
-            coaching_data['weekly'].append({
-                'period': data['period'],
-                'generated_at': data['generated_at'],
-                'coaching': data['coaching']
-            })
-    
-    return coaching_data
 
 def generate_dashboard_data():
     """Genera un archivo JSON con todos los datos necesarios para el dashboard"""
@@ -242,8 +204,6 @@ def generate_dashboard_data():
     # Combinar todas las estadísticas
     stats.update(enhanced_metrics)
     
-    # Cargar datos de coaching
-    coaching_data = load_coaching_data(year)
     
     # Cargar resúmenes mensuales
     monthly_data = []
@@ -282,8 +242,7 @@ def generate_dashboard_data():
         'yearData': year_data,
         'yearStats': stats,
         'monthlyData': monthly_data,
-        'weeklyData': weekly_data,
-        'coaching': coaching_data
+        'weeklyData': weekly_data
     }
     
     # Guardar en docs para GitHub Pages
