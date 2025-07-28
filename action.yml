@@ -128,6 +128,25 @@ runs:
           python monthly_summary.py
         fi
     
+    - name: Generate dashboard data
+      shell: bash
+      env:
+        EXPORT_OUTPUT_DIR: ${{ inputs.export-path }}
+      run: |
+        echo "📊 Generating dashboard data..."
+        # Download dashboard generation script if needed
+        if [ ! -f "generate_dashboard_data.py" ]; then
+          wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/generate_dashboard_data.py
+        fi
+        python generate_dashboard_data.py
+        
+        # Generate monthly data files
+        echo "📅 Generating monthly data files..."
+        if [ ! -f "generate_monthly_data.py" ]; then
+          wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/generate_monthly_data.py
+        fi
+        python generate_monthly_data.py
+    
     - name: Commit and push exports
       if: ${{ inputs.commit-exports == 'true' }}
       shell: bash
@@ -135,4 +154,5 @@ runs:
         git config --local user.email "action@github.com"
         git config --local user.name "PropReports Export Action"
         git add ${{ inputs.export-path }}/
+        git add docs/ || true  # Add docs folder if it exists
         git diff --quiet && git diff --staged --quiet || (git commit -m "📊 PropReports export - $(date +%Y-%m-%d)" && git push)
