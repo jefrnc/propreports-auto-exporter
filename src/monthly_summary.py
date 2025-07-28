@@ -217,6 +217,11 @@ def generate_monthly_summary(year=None, month=None):
     winning_trades = [t for t in all_trades if t.get('pnl', 0) > 0]
     losing_trades = [t for t in all_trades if t.get('pnl', 0) < 0]
     
+    # Obtener top 10 trades (winners y losers)
+    sorted_trades = sorted(all_trades, key=lambda x: x.get('pnl', 0), reverse=True)
+    top_winners = [t for t in sorted_trades if t.get('pnl', 0) > 0][:10]
+    top_losers = [t for t in sorted_trades if t.get('pnl', 0) < 0][-10:][::-1]  # Reverse para mostrar peores primero
+    
     # Estructura del resumen mensual
     monthly_summary = {
         'generateDate': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -250,6 +255,8 @@ def generate_monthly_summary(year=None, month=None):
                 'winRate': ws.get('summary', {}).get('winRate', 0)
             } for ws in weekly_summaries
         ],
+        'topWinners': top_winners,
+        'topLosers': top_losers,
         'recommendations': []  # Se llenarán después
     }
     

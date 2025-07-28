@@ -1,0 +1,16 @@
+{
+  "month": 10,
+  "year": 2025,
+  "trades": [],
+  "dailyData": {},
+  "summary": {
+    "totalTrades": 0,
+    "totalPnL": 0,
+    "winRate": 0,
+    "bestDay": null,
+    "bestDayPnL": -Infinity,
+    "worstDay": null,
+    "worstDayPnL": Infinity,
+    "tradingDays": 0
+  }
+}
