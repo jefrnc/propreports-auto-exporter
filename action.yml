@@ -138,14 +138,14 @@ runs:
         if [ ! -f "generate_dashboard_data.py" ]; then
           wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/generate_dashboard_data.py
         fi
-        python generate_dashboard_data.py
+        python generate_dashboard_data.py || echo "Dashboard generation will work after first export"
         
         # Generate monthly data files
         echo "📅 Generating monthly data files..."
         if [ ! -f "generate_monthly_data.py" ]; then
           wget -q https://raw.githubusercontent.com/jefrnc/propreports-auto-exporter/main/src/generate_monthly_data.py
         fi
-        python generate_monthly_data.py
+        python generate_monthly_data.py || echo "Monthly data generation will work after first export"
     
     - name: Commit and push exports
       if: ${{ inputs.commit-exports == 'true' }}
