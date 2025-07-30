@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-07-28 20:13:25",
+  "lastUpdate": "2025-07-28 20:23:42",
   "year": 2025,
   "yearData": {
     "2025-03-30": {
@@ -1138,10 +1138,5 @@
       "pnl": 0,
       "winRate": 0
     }
-  ],
-  "coaching": {
-    "monthly": [],
-    "weekly": [],
-    "enabled": false
-  }
+  ]
 }
