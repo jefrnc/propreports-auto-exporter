@@ -288,15 +288,15 @@ class PropReportsExporter:
 
 def main():
     """Función principal"""
-    # Configuración desde variables de entorno o valores por defecto
-    DOMAIN = os.getenv('PROPREPORTS_DOMAIN', 'zim.propreports.com')
-    USERNAME = os.getenv('PROPREPORTS_USER', 'ZIMDASE9C64')
-    PASSWORD = os.getenv('PROPREPORTS_PASS', 'Xby6lDWqAs')
+    # Configuración desde variables de entorno
+    DOMAIN = os.getenv('PROPREPORTS_DOMAIN', '')
+    USERNAME = os.getenv('PROPREPORTS_USER', '')
+    PASSWORD = os.getenv('PROPREPORTS_PASS', '')
     DAYS_BACK = int(os.getenv('EXPORT_DAYS_BACK', '30'))
-    
-    # Advertencia si se usan credenciales hardcodeadas
-    if USERNAME == 'ZIMDASE9C64':
-        print("⚠️  Usando credenciales de ejemplo. Configura variables de entorno para producción.")
+
+    if not all([DOMAIN, USERNAME, PASSWORD]):
+        print("❌ Missing required environment variables: PROPREPORTS_DOMAIN, PROPREPORTS_USER, PROPREPORTS_PASS")
+        raise SystemExit(1)
     
     # Crear exportador
     exporter = PropReportsExporter(DOMAIN, USERNAME, PASSWORD)

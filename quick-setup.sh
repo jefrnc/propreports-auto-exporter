@@ -42,7 +42,7 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Run PropReports Export
       uses: ${github_user}/propreports-exporter@v1
@@ -76,9 +76,9 @@ This repo uses GitHub Actions to automatically export data daily.
 
 ### Required Secrets
 
-- \`PROPREPORTS_DOMAIN\`: $domain
-- \`PROPREPORTS_USER\`: $username
-- \`PROPREPORTS_PASS\`: [configured]
+- \`PROPREPORTS_DOMAIN\`: Your PropReports domain
+- \`PROPREPORTS_USER\`: Your PropReports username
+- \`PROPREPORTS_PASS\`: Your PropReports password
 
 ## 📅 Schedule
 
@@ -105,9 +105,9 @@ echo -e "\n${GREEN}✅ Setup complete!${NC}"
 echo -e "\n${BLUE}Next steps:${NC}"
 echo "1. Create a new private repository on GitHub"
 echo "2. Add these secrets to your repository:"
-echo "   - PROPREPORTS_DOMAIN: $domain"
-echo "   - PROPREPORTS_USER: $username"
-echo "   - PROPREPORTS_PASS: ****"
+echo "   - PROPREPORTS_DOMAIN"
+echo "   - PROPREPORTS_USER"
+echo "   - PROPREPORTS_PASS"
 echo "3. Push this code to your repository:"
 echo -e "${YELLOW}"
 echo "   git init"

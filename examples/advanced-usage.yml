@@ -24,7 +24,7 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Export PropReports Data
       uses: jefrnc/propreports-auto-exporter@v1
@@ -37,7 +37,7 @@ jobs:
         generate-monthly: ${{ github.event.inputs.force-monthly || 'auto' }}
     
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: trading-exports-${{ github.run_number }}

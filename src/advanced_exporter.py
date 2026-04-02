@@ -20,9 +20,13 @@ def export_date_range(start_date, end_date, force_update=False):
         force_update: Si True, sobrescribe archivos existentes
     """
     # Configuración
-    DOMAIN = os.getenv('PROPREPORTS_DOMAIN', 'zim.propreports.com')
-    USERNAME = os.getenv('PROPREPORTS_USER', 'ZIMDASE9C64')
-    PASSWORD = os.getenv('PROPREPORTS_PASS', 'Xby6lDWqAs')
+    DOMAIN = os.getenv('PROPREPORTS_DOMAIN', '')
+    USERNAME = os.getenv('PROPREPORTS_USER', '')
+    PASSWORD = os.getenv('PROPREPORTS_PASS', '')
+
+    if not all([DOMAIN, USERNAME, PASSWORD]):
+        print("❌ Missing required environment variables: PROPREPORTS_DOMAIN, PROPREPORTS_USER, PROPREPORTS_PASS")
+        raise SystemExit(1)
     
     # Convertir strings a datetime si es necesario
     if isinstance(start_date, str):
