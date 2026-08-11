@@ -380,3 +380,12 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 ⭐ If this project helps you, please star it!
 
 Made with ❤️ by traders, for traders.
+
+---
+
+## Support this project
+
+Free, and maintained on my own time. Sponsorship covers the market data and broker API access
+behind these tools, and keeps them working when brokers change their export formats.
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-jefrnc-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/jefrnc)
